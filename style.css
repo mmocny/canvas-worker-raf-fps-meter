@@ -1,0 +1,34 @@
+body {
+font-family: 'Roboto';
+font-size: 18px;
+padding: 120px;
+}
+
+#canvi {
+position: fixed;
+bottom: 0;
+left: 0;
+background-color: white;
+}
+
+#long_task_tracker {
+position: fixed;
+bottom: 0;
+right: 0;
+padding: 20px;
+font-family: 'Roboto';
+font-size: 18px;
+background-color: rgb(206, 127, 127);
+}
+
+canvas {
+margin: 20px;
+}
+
+#canvas_main_raf_main,
+/* #canvas_wrkr_raf_main, */
+/* #canvas_wrkr_raf_wrkr, */
+dummy
+{
+display: none;
+}

@@ -29,9 +29,13 @@ worker.postMessage({
 
 // Start adding Long Tasks on main
 (async function() {
-  function block(block_ms) {
+  function blog(text) {
     const el = document.getElementById('long_task_tracker');
-    el.textContent = `blocked for ${block_ms.toFixed(0)}ms`;
+    el.textContent = text;
+  }
+
+  function block(block_ms) {
+    blog(`blocked for ${block_ms.toFixed(0)}ms`);
 
     let now = performance.now();
     let end = now + block_ms;
@@ -43,14 +47,14 @@ worker.postMessage({
   // Will delay at least one single animation frame
   async function block_with_delay(block_ms, delay_ms = 0) {
     const then = performance.now() + delay_ms;
-    const el = document.getElementById('long_task_tracker');
 
     for await( let time of ThreadLocalRAFIterator() ) {
-      el.textContent = `will block for ${block_ms.toFixed(0)}ms, in ${(then-time).toFixed(0)}ms`;
+      blog(`will block for ${block_ms.toFixed(0)}ms, in ${(then-time).toFixed(0)}ms`);
+
       if (time >= then) break;
     }
 
-    setTimeout(() => block(block_ms), 0);
+    block(block_ms);
   }
 
   let interval;
@@ -66,4 +70,8 @@ worker.postMessage({
 
   await block_with_delay(5000, 5000);
   toggleLongTasks();
+
+  document.getElementById('t').addEventListener('keydown', (evt) => {
+    block(100);
+  });
 })();
