@@ -63,12 +63,12 @@ worker.postMessage({
       interval = clearInterval(interval);
     } else {
       interval = setInterval(() => {
-        block(Math.random() * 100);
+        block((1000/90)/2);
       });
     }
   }
 
-  await block_with_delay(5000, 5000);
+  // await block_with_delay(5000, 5000);
   toggleLongTasks();
 
   document.getElementById('t').addEventListener('keydown', (evt) => {
