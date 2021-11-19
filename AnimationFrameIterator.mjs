@@ -22,7 +22,7 @@ export async function* PostMessageRAFIterator() {
             break;
         }
       };
-      self.addEventListener('message', handler);
+      self.addEventListener('message', handler); // TODO: investigate using { once: true }
     });
   }
 }
