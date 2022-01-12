@@ -7,6 +7,7 @@ import { ThreadLocalRAFIterator, SendPostMessageRAF } from './AnimationFrameIter
 const canvas_wrkr_raf_main = document.querySelector('#canvas_wrkr_raf_main').transferControlToOffscreen();
 const canvas_wrkr_raf_wrkr = document.querySelector('#canvas_wrkr_raf_wrkr').transferControlToOffscreen();
 const worker = new Worker('./CanvasWorker.mjs', { type: 'module' });
+
 worker.postMessage({
   msg: 'start',
   canvas_wrkr_raf_main,
