@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <title>Responsiveness Test</title>
+</head>
+<body>
+	<input type=button value="Clicky"></input>
+  <input type=text placeholder="Typey"></input>
+  <input type=checkbox valye="Selecty"></input>
+
+  <script type=module>
+    import { measureResponsiveness } from './responsiveness.js';
+    measureResponsiveness();
+
+    function randomColor() {
+      return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    }
+
+    function block(ms) {
+      // console.log(`Starting to sync block for ${ms}ms`);
+      const end = performance.now() + ms;
+      while (performance.now() < end);
+    }
+
+    function blockingRaf(ms, cb) {
+      requestAnimationFrame((time) => {
+        // console.log('Starting rAF handler');
+        block(ms);
+        cb();
+      });
+    }
+
+    function keepBusy(event) {
+      block(1);
+      button.style['background-color'] = randomColor();
+      blockingRaf(1, () => document.body.style['background-color'] = randomColor());
+    }
+
+    function on(element, event, handler) {
+      element.addEventListener(event, handler);
+    }
+
+    function onAll(element, handler, events) {
+      for (let event of events) {
+        on(element, event, (...args) => handler(...args)); // wrap with lambda so handlers are referentially equal
+      }
+
+    }
+
+    const EVENTS = [
+      "keydown",
+      "keyup",
+      "keypress",
+      "pointerdown",
+      "pointerup",
+      "pointercancel",
+      "touchstart",
+      "touchend",
+      "touchcancel",
+      "mousedown",
+      "mouseup",
+      "gotpointercapture",
+      "lostpointercapture",
+      "click",
+      "dblclick",
+      "auxclick",
+      "contextmenu",
+      "pointerleave",
+      "pointerout",
+      "pointerover",
+      "pointerenter",
+      "mouseout",
+      "mouseover",
+      "mouseleave",
+      "mouseenter",
+      "lostpointercapture",
+      "dragstart",
+      "dragend",
+      "dragenter",
+      "dragleave",
+      "dragover",
+      "drop",
+      "beforeinput",
+      "input",
+      "compositionstart",
+      "compositionupdate",
+      "compositionend",
+    ];
+
+    const button = document.querySelector('input[type="button"]');
+    for (let i = 0; i < 10; i++) {
+      onAll(button, keepBusy, EVENTS)
+    }
+
+    const text = document.querySelector('input[type="text"]');
+    for (let i = 0; i < 10; i++) {
+      onAll(text, keepBusy, EVENTS);
+    }
+
+    const checkbox = document.querySelector('input[type="checkbox"]');
+    for (let i = 0; i < 10; i++) {
+      onAll(checkbox, keepBusy, EVENTS);
+    }
+    
+    setInterval(() => {
+      block(2);
+      button.style['background-color'] = randomColor();
+    });
+
+  </script>
+</body>
+</head>
