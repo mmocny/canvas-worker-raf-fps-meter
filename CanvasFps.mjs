@@ -17,7 +17,7 @@ export class CanvasFps {
    */
   async startDrawing() {
     for await (let frameTime of ThreadLocalRAFIterator()) {
-      let fps = this.fpsTracker.mostRecentFps;
+      let fps = this.fpsTracker.mostRecentFps.toFixed(1);
 
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
       this.drawCircle(this.fpsTracker.getColor());

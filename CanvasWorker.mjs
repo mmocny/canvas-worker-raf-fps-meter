@@ -18,8 +18,8 @@ addEventListener('message', e => {
   }
 });
 
-const mainFpsTracker = new FpsTracker;
-const wrkrFpsTracker = new FpsTracker;
+const mainFpsTracker = new FpsTracker(5000);
+const wrkrFpsTracker = new FpsTracker(5000);
 
 async function watchPostMessageFps() {
   for await (let frameTime of PostMessageRAFIterator()) {
