@@ -13,6 +13,10 @@
     import { measureResponsiveness } from './responsiveness.js';
     measureResponsiveness();
 
+    const HANDLER_BLOCK_TIME = 1; // ms
+    const RAF_BLOCK_TIME = 1; // ms
+    const BGTASK_BLOCK_TIME = 2; // ms
+
     function randomColor() {
       return `#${Math.floor(Math.random()*16777215).toString(16)}`;
     }
@@ -32,9 +36,16 @@
     }
 
     function keepBusy(event) {
-      block(1);
+      block(HANDLER_BLOCK_TIME);
       button.style['background-color'] = randomColor();
-      blockingRaf(1, () => document.body.style['background-color'] = randomColor());
+      blockingRaf(RAF_BLOCK_TIME, () => document.body.style['background-color'] = randomColor());
+    }
+
+    function addPreventDefault(handler) {
+      return (...args) => {
+        handler(...args);
+        event.preventDefault();
+      };
     }
 
     function on(element, event, handler) {
@@ -88,23 +99,26 @@
       "compositionend",
     ];
 
+    const handler = keepBusy;
+    // const handler = addPreventDefault(keepBusy);
+
     const button = document.querySelector('input[type="button"]');
     for (let i = 0; i < 10; i++) {
-      onAll(button, keepBusy, EVENTS)
+      onAll(button, handler, EVENTS)
     }
 
     const text = document.querySelector('input[type="text"]');
     for (let i = 0; i < 10; i++) {
-      onAll(text, keepBusy, EVENTS);
+      onAll(text, handler, EVENTS);
     }
 
     const checkbox = document.querySelector('input[type="checkbox"]');
     for (let i = 0; i < 10; i++) {
-      onAll(checkbox, keepBusy, EVENTS);
+      onAll(checkbox, handler, EVENTS);
     }
     
     setInterval(() => {
-      block(2);
+      block(BGTASK_BLOCK_TIME);
       button.style['background-color'] = randomColor();
     });
 
