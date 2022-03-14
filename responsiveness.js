@@ -180,6 +180,32 @@ function calculateTotalProcessingTime(entries) {
 	return sum;
 }
 
+// Known failures:
+// - `click` events are always a TAP interaction with unique ID when its due to keyboard
+function estimateInteractonCountByEntries(entries) {
+	const interactionIdIncrement = 7;
+	const interactionIds = entries.map(entry => entry.interactionId).filter(interactionId => !!interactionId);
+	const minKnownInteractionId = Math.min(...interactionIds);
+	const maxKnownInteractionId = Math.max(...interactionIds);
+	const diffKnownInteractionId = maxKnownInteractionId - minKnownInteractionId;
+	const estimatedKnownInteractionIds = interactionIds.length ? (diffKnownInteractionId / interactionIdIncrement) + 1 : 0;
+	return estimatedKnownInteractionIds
+}
+
+// Known failures:
+// - none so far
+function estimateInteractionCountByEventCounts() {
+	const ptrCounts = ['pointerdown', 'pointerup'].map(t => performance.eventCounts.get(t));
+	const ptrCancel = ['pointercancel'].map(t => performance.eventCounts.get(t));
+	const keyCounts = ['keydown', 'keypress', 'keyup'].map(t => performance.eventCounts.get(t));
+	const ptrInteractions = Math.max(...ptrCounts) - ptrCancel;
+	const keyInteractions = Math.max(...keyCounts);
+	const totalCounts = ptrInteractions + keyInteractions;
+	return totalCounts;
+}
+
+// setInterval(() => console.log('interactionCount:', estimateInteractionCountByEventCounts()), 1000);
+
 // Generate interesting timings for a specific frame of entries
 function getTimingsForFrame(entries) {
 	// A note here: many entries can share startTime.  Use the first one, but don't assume its the first to get processed.
@@ -287,6 +313,24 @@ export function measureResponsiveness() {
 		durationThreshold: 0, // 16 minumum by spec
 		buffered: true
 	});
+
+	// setInterval(() => estimateInteractonCountByEntries(AllEntries), 1000);
 }
+
+
+export function measureEvents() {
+	const observer = new PerformanceObserver(list => {
+		console.group(performance.now().toFixed(1));
+		[...list.getEntries()].forEach(entry => console.log([entry.name, entry.interactionId]));
+		console.groupEnd();
+	});
+
+	observer.observe({
+		type: "event",
+		durationThreshold: 0, // 16 minumum by spec
+		buffered: true
+	});
+}
+
 
 // measureResponsiveness();

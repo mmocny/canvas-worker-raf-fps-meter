@@ -2,17 +2,15 @@
 <html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
-  <title>Responsiveness Test</title>
+  <title>Copy/Paste Test</title>
 </head>
 <body>
-	<input type=button value="Clicky"></input>
   <input type=text placeholder="Typey"></input>
-  <input type=checkbox valye="Selecty"></input>
 
   <script type=module>
     import { measureResponsiveness, measureEvents } from './responsiveness.js';
-    measureResponsiveness();
-    // measureEvents();
+    // measureResponsiveness();
+    measureEvents();
 
     const HANDLER_BLOCK_TIME = 1; // ms
     const RAF_BLOCK_TIME = 1; // ms
@@ -38,7 +36,6 @@
 
     function keepBusy(event) {
       block(HANDLER_BLOCK_TIME);
-      button.style['background-color'] = randomColor();
       blockingRaf(RAF_BLOCK_TIME, () => document.body.style['background-color'] = randomColor());
     }
 
@@ -103,24 +100,13 @@
     const handler = keepBusy;
     // const handler = addPreventDefault(keepBusy);
 
-    const button = document.querySelector('input[type="button"]');
-    for (let i = 0; i < 10; i++) {
-      onAll(button, handler, EVENTS)
-    }
-
     const text = document.querySelector('input[type="text"]');
     for (let i = 0; i < 10; i++) {
       onAll(text, handler, EVENTS);
     }
 
-    const checkbox = document.querySelector('input[type="checkbox"]');
-    for (let i = 0; i < 10; i++) {
-      onAll(checkbox, handler, EVENTS);
-    }
-    
     setInterval(() => {
       block(BGTASK_BLOCK_TIME);
-      button.style['background-color'] = randomColor();
     });
 
   </script>
