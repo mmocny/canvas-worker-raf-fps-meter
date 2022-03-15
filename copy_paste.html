@@ -94,7 +94,7 @@
       "dragend",
       "dragenter",
       "dragleave",
-      "dragover",
+      // "dragover",
       "drop",
       "beforeinput",
       "input",
@@ -116,20 +116,20 @@
         group(...args);
         let el = document.getElementById('log');
         el.innerHTML += `<hr/>`;
-        el.innerHTML += `<strong><pre>${args.join(' ')}<pre></strong>`;
+        // el.innerHTML += `<strong><pre>${args.join(' ')}<pre></strong>`;
       }
     }
 
     function reportEvents() {
       const observer = new PerformanceObserver(list => {
-        let renderTime = list.getEntries()[0].startTime + list.getEntries()[0].duration;
-        renderTime = Math.round(renderTime / 8) * 8;
-        console.group(`renderTime: ${renderTime}`);
-        [...list.getEntries()].forEach(entry => {
-          if (!EVENTS.includes(entry.name))
-            return;
-          console.log(`${entry.name} ${entry.interactionId}`);
-        });
+        const entries = list.getEntries().filter(entry => EVENTS.includes(entry.name));
+        if (entries.length == 0) return;
+
+        console.group();
+        for (let entry of entries) {
+          const renderTime = Math.round((entry.startTime + entry.duration) / 8) * 8;
+          console.log(`renderTime:${renderTime} ${entry.name} id:${entry.interactionId}`);
+        }
         console.groupEnd();
       });
 
@@ -144,7 +144,6 @@
     reportEvents();
     setInterval(() => {
       document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(estimateInteractionCountsByEventCounts(),null,2)}<pre></div>`;
-      
     }, 100);
 
     const HANDLER_BLOCK_TIME = 1; // ms
