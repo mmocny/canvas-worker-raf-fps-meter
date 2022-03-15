@@ -39,10 +39,10 @@
       display: grid;
       gap: 0.5rem;
       margin: 0.5rem;
-      grid-template-rows: repeat(4, min-content) 1fr;
+      grid-template-rows: repeat(3, min-content) 1fr;
     }
 
-    body > div { 
+    div#counts, div#log { 
       background-color: #eee;
       font-size: 10px;
     }
@@ -54,11 +54,15 @@
   </style>
 </head>
 <body>
-  <img src="https://web-dev.imgix.net/image/admin/urYfROhm806fvOPRMsRg.jpg?auto=format&h=100"></img>
-  <p>
-    Use this text to highlight & drag.
-    On android, long press after highlighting to drag.
-  </p>
+  <div>
+    <img src="https://web-dev.imgix.net/image/admin/urYfROhm806fvOPRMsRg.jpg?auto=format&h=100"></img>
+    <input type="button" value="Clicky"></input>
+    <input type="checkbox">Checky</input>
+    <div>
+      Use the Image above to drag, or long press for contextmenu.
+      Or, highlight this text and longpress to drag.
+    </div>
+  </div>
   <input type=text placeholder="Typey" autofocus></input>
   <div id="counts"></div>
   <div id="log"></div>
@@ -73,11 +77,11 @@
       "pointerdown",
       "pointerup",
       "pointercancel",
-      "touchstart",
-      "touchend",
-      "touchcancel",
-      "mousedown",
-      "mouseup",
+      // "touchstart",
+      // "touchend",
+      // "touchcancel",
+      // "mousedown",
+      // "mouseup",
       // "gotpointercapture",
       // "lostpointercapture",
       "click",
@@ -95,8 +99,8 @@
       // "lostpointercapture",
       "dragstart",
       "dragend",
-      "dragenter",
-      "dragleave",
+      // "dragenter",
+      // "dragleave",
       // "dragover",
       "drop",
       "beforeinput",
@@ -149,9 +153,8 @@
       document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(counts,null,2)}<pre></div>`;
     }, 100);
 
-    const HANDLER_BLOCK_TIME = 1; // ms
-    const RAF_BLOCK_TIME = 1; // ms
-    const BGTASK_BLOCK_TIME = 2; // ms
+    const HANDLER_BLOCK_TIME = 20; // ms
+    const RAF_BLOCK_TIME = 20; // ms
 
     function randomColor() {
       return `#${Math.floor(Math.random()*16777215).toString(16)}`;
@@ -194,16 +197,12 @@
 
     }
 
-    const handler = keepBusy;
-    // const handler = addPreventDefault(keepBusy);
-
-    for (let i = 0; i < 10; i++) {
-      onAll(document, handler, EVENTS);
+    const handler = (event) => {
+      console.log(`timeStamp:${event.timeStamp.toFixed(2)} ${event.type}`);
+      keepBusy();
     }
-
-    setInterval(() => {
-      block(BGTASK_BLOCK_TIME);
-    });
+    // const handler = addPreventDefault(keepBusy);
+    onAll(document, handler, EVENTS);
 
   </script>
 </body>
