@@ -57,7 +57,7 @@
   <div>
     <img src="https://web-dev.imgix.net/image/admin/urYfROhm806fvOPRMsRg.jpg?auto=format&h=100"></img>
     <input type="button" value="Clicky"></input>
-    <input type="checkbox">Checky</input>
+    <input type="checkbox">Enable JS Handlers</input>
     <div>
       Use the Image above to drag, or long press for contextmenu.
       Or, highlight this text and longpress to drag.
@@ -179,30 +179,38 @@
       document.body.style['background-color'] = randomColor();
     }
 
-    function addPreventDefault(handler) {
-      return (...args) => {
-        handler(...args);
-        event.preventDefault();
-      };
-    }
-
-    function on(element, event, handler) {
-      element.addEventListener(event, handler);
-    }
-
-    function onAll(element, handler, events) {
-      for (let event of events) {
-        on(element, event, (...args) => handler(...args)); // wrap with lambda so handlers are referentially equal
-      }
-
-    }
+    // function addPreventDefault(handler) {
+    //   return (...args) => {
+    //     handler(...args);
+    //     event.preventDefault();
+    //   };
+    // }
 
     const handler = (event) => {
       console.log(`timeStamp:${event.timeStamp.toFixed(2)} ${event.type}`);
       keepBusy();
     }
-    // const handler = addPreventDefault(keepBusy);
-    onAll(document, handler, EVENTS);
+
+    function addHandlers() {
+      for (let event of EVENTS) {
+        document.addEventListener(event, handler);
+      }
+    }
+    function removeHandlers() {
+      for (let event of EVENTS) {
+        document.removeEventListener(event, handler);
+      }
+    }
+
+    const checky = document.querySelector('input[type=checkbox]');
+    checky.addEventListener('change', (event) => {
+      if (event.target.checked) {
+        addHandlers();
+      } else {
+        removeHandlers();
+      }
+    });
+    checky.click();
 
   </script>
 </body>
