@@ -194,7 +194,7 @@ function estimateInteractonCountByEntries(entries) {
 
 // Known failures:
 // - none so far
-function estimateInteractionCountsByEventCounts() {
+export function estimateInteractionCountsByEventCounts() {
     const drag = performance.eventCounts.get('pointercancel');
     const tap = performance.eventCounts.get('pointerup'); 
 	// Alternative:

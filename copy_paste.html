@@ -1,16 +1,151 @@
 <!DOCTYPE html>
 <html>
+  <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<head>
   <title>Copy/Paste Test</title>
+  <style>
+    /* css reset */
+    html {
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
+    body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+      margin: 0;
+      padding: 0;
+      font-weight: normal;
+    }
+
+    ol, ul {
+      list-style: none;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* grid */
+    html {
+      /* height: 100%; */
+    }
+
+    body {
+      height: calc(100vh - 2rem);
+      display: grid;
+      gap: 1rem;
+      margin: 1rem;
+      grid-template-rows: repeat(3, min-content) 1fr;
+    }
+
+    body > div { 
+      background-color: #eee;
+    }
+
+    body > div:last-of-type {
+      overflow: scroll;
+    }
+
+  </style>
 </head>
 <body>
-  <input type=text placeholder="Typey"></input>
+  <p>
+    Use this text to highlight & drag.
+  </p>
+  <input type=text placeholder="Typey" autofocus></input>
+  <div id="counts"></div>
+  <div id="log"></div>
 
   <script type=module>
-    import { measureResponsiveness, measureEvents } from './responsiveness.js';
-    // measureResponsiveness();
-    measureEvents();
+    import { measureResponsiveness, estimateInteractionCountsByEventCounts } from './responsiveness.js';
+
+    const EVENTS = [
+      "keydown",
+      "keyup",
+      "keypress",
+      "pointerdown",
+      "pointerup",
+      "pointercancel",
+      "touchstart",
+      "touchend",
+      "touchcancel",
+      "mousedown",
+      "mouseup",
+      // "gotpointercapture",
+      // "lostpointercapture",
+      "click",
+      "dblclick",
+      "auxclick",
+      "contextmenu",
+      // "pointerleave",
+      // "pointerout",
+      // "pointerover",
+      // "pointerenter",
+      // "mouseout",
+      // "mouseover",
+      // "mouseleave",
+      // "mouseenter",
+      // "lostpointercapture",
+      "dragstart",
+      "dragend",
+      "dragenter",
+      "dragleave",
+      "dragover",
+      "drop",
+      "beforeinput",
+      "input",
+      "compositionstart",
+      "compositionupdate",
+      "compositionend",
+    ];
+
+    function replaceConsole() {
+      var log = console.log.bind(console);
+      var group = console.group.bind(console);
+      console.log = function (...args) {
+        log(...args);
+        let el = document.getElementById('log');
+        el.innerHTML += `<div><pre>${args.join(' ')}<pre></div>`;
+        el.scrollTop = el.scrollHeight;
+      }
+      console.group = function (...args) {
+        group(...args);
+        let el = document.getElementById('log');
+        el.innerHTML += `<hr/>`;
+        el.innerHTML += `<strong><pre>${args.join(' ')}<pre></strong>`;
+      }
+    }
+
+    function reportEvents() {
+      const observer = new PerformanceObserver(list => {
+        let renderTime = list.getEntries()[0].startTime + list.getEntries()[0].duration;
+        renderTime = Math.round(renderTime / 8) * 8;
+        console.group(`renderTime: ${renderTime}`);
+        [...list.getEntries()].forEach(entry => {
+          if (!EVENTS.includes(entry.name))
+            return;
+          console.log(`${entry.name} ${entry.interactionId}`);
+        });
+        console.groupEnd();
+      });
+
+      observer.observe({
+        type: "event",
+        durationThreshold: 0, // 16 minumum by spec
+        buffered: true
+      });
+    }
+
+    replaceConsole();
+    reportEvents();
+    setInterval(() => {
+      document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(estimateInteractionCountsByEventCounts(),null,2)}<pre></div>`;
+      
+    }, 100);
 
     const HANDLER_BLOCK_TIME = 1; // ms
     const RAF_BLOCK_TIME = 1; // ms
@@ -57,52 +192,11 @@
 
     }
 
-    const EVENTS = [
-      "keydown",
-      "keyup",
-      "keypress",
-      "pointerdown",
-      "pointerup",
-      "pointercancel",
-      "touchstart",
-      "touchend",
-      "touchcancel",
-      "mousedown",
-      "mouseup",
-      "gotpointercapture",
-      "lostpointercapture",
-      "click",
-      "dblclick",
-      "auxclick",
-      "contextmenu",
-      "pointerleave",
-      "pointerout",
-      "pointerover",
-      "pointerenter",
-      "mouseout",
-      "mouseover",
-      "mouseleave",
-      "mouseenter",
-      "lostpointercapture",
-      "dragstart",
-      "dragend",
-      "dragenter",
-      "dragleave",
-      "dragover",
-      "drop",
-      "beforeinput",
-      "input",
-      "compositionstart",
-      "compositionupdate",
-      "compositionend",
-    ];
-
     const handler = keepBusy;
     // const handler = addPreventDefault(keepBusy);
 
-    const text = document.querySelector('input[type="text"]');
     for (let i = 0; i < 10; i++) {
-      onAll(text, handler, EVENTS);
+      onAll(document, handler, EVENTS);
     }
 
     setInterval(() => {
