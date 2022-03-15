@@ -197,11 +197,12 @@ function estimateInteractonCountByEntries(entries) {
 export function estimateInteractionCountsByEventCounts() {
     const drag = performance.eventCounts.get('dragstart');
 	const touchScroll = performance.eventCounts.get('pointercancel') - drag;
-    const tap = performance.eventCounts.get('pointerdown') - touchScroll; 
-
+    const tap = performance.eventCounts.get('pointerup');
 	// Perhaps we can use just keydown, but I think there may be platform differences when key is held down
     const keyboard = Math.max(...['keydown', 'keypress'].map(t => performance.eventCounts.get(t)));
-    return { tap, drag, keyboard };
+	const interactionCount = tap + drag + keyboard;
+
+    return { tap, touchScroll, drag, keyboard, interactionCount };
 }
 
 // setInterval(() => console.log('interactionCount:', estimateInteractionCountByEventCounts()), 1000);

@@ -143,7 +143,8 @@
     replaceConsole();
     reportEvents();
     setInterval(() => {
-      document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(estimateInteractionCountsByEventCounts(),null,2)}<pre></div>`;
+      const counts = estimateInteractionCountsByEventCounts();
+      document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(counts,null,2)}<pre></div>`;
     }, 100);
 
     const HANDLER_BLOCK_TIME = 1; // ms
