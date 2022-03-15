@@ -30,20 +30,21 @@
     }
 
     /* grid */
-    html {
-      /* height: 100%; */
+    pre {
+      margin: 0;
     }
 
     body {
-      height: calc(100svh - 2rem);
+      height: calc(100svh - 1rem);
       display: grid;
-      gap: 1rem;
-      margin: 1rem;
-      grid-template-rows: repeat(3, min-content) 1fr;
+      gap: 0.5rem;
+      margin: 0.5rem;
+      grid-template-rows: repeat(4, min-content) 1fr;
     }
 
     body > div { 
       background-color: #eee;
+      font-size: 10px;
     }
 
     body > div:last-of-type {
@@ -111,14 +112,13 @@
       console.log = function (...args) {
         log(...args);
         let el = document.getElementById('log');
-        el.innerHTML += `<div><pre>${args.join(' ')}<pre></div>`;
+        el.innerHTML += `<pre>${args.join(' ')}<pre>`;
         el.scrollTop = el.scrollHeight;
       }
       console.group = function (...args) {
         group(...args);
         let el = document.getElementById('log');
-        el.innerHTML += `<hr/>`;
-        // el.innerHTML += `<strong><pre>${args.join(' ')}<pre></strong>`;
+        // el.innerHTML += `<hr/>`;
       }
     }
 
