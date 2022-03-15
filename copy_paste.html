@@ -26,17 +26,17 @@
       while (performance.now() < end);
     }
 
-    function blockingRaf(ms, cb) {
+    function blockingRaf(ms) {
       requestAnimationFrame((time) => {
         // console.log('Starting rAF handler');
         block(ms);
-        cb();
       });
     }
 
     function keepBusy(event) {
       block(HANDLER_BLOCK_TIME);
-      blockingRaf(RAF_BLOCK_TIME, () => document.body.style['background-color'] = randomColor());
+      blockingRaf(RAF_BLOCK_TIME);
+      document.body.style['background-color'] = randomColor();
     }
 
     function addPreventDefault(handler) {

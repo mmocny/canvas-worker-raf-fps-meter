@@ -194,14 +194,15 @@ function estimateInteractonCountByEntries(entries) {
 
 // Known failures:
 // - none so far
-function estimateInteractionCountByEventCounts() {
-	const ptrCounts = ['pointerdown', 'pointerup'].map(t => performance.eventCounts.get(t));
-	const ptrCancel = ['pointercancel'].map(t => performance.eventCounts.get(t));
-	const keyCounts = ['keydown', 'keypress', 'keyup'].map(t => performance.eventCounts.get(t));
-	const ptrInteractions = Math.max(...ptrCounts) - ptrCancel;
-	const keyInteractions = Math.max(...keyCounts);
-	const totalCounts = ptrInteractions + keyInteractions;
-	return totalCounts;
+function estimateInteractionCountsByEventCounts() {
+    const drag = performance.eventCounts.get('pointercancel');
+    const tap = performance.eventCounts.get('pointerup'); 
+	// Alternative:
+	// const tap = performance.eventCounts.get('pointerdown') - drag;
+
+	// Perhaps we can use just keydown, but I think there may be platform differences when key is held down
+    const keyboard = Math.max(...['keydown', 'keypress'].map(t => performance.eventCounts.get(t)));
+    return { tap, drag, keyboard };
 }
 
 // setInterval(() => console.log('interactionCount:', estimateInteractionCountByEventCounts()), 1000);
