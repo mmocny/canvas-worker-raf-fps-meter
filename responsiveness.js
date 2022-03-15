@@ -196,6 +196,7 @@ function estimateInteractonCountByEntries(entries) {
 // - none so far
 export function estimateInteractionCountsByEventCounts() {
     const drag = performance.eventCounts.get('dragstart');
+	// TODO: pinch zoom gets 2 pointer cancels...
 	const touchScroll = performance.eventCounts.get('pointercancel') - drag;
     const tap = performance.eventCounts.get('pointerup');
 	// Perhaps we can use just keydown, but I think there may be platform differences when key is held down
