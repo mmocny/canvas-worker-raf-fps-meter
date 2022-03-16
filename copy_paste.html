@@ -57,7 +57,8 @@
   <div>
     <img src="https://web-dev.imgix.net/image/admin/urYfROhm806fvOPRMsRg.jpg?auto=format&h=100"></img>
     <input type="button" value="Clicky"></input>
-    <input type="checkbox">Enable JS Handlers</input>
+    <input id="checky" type="checkbox">Enable JS Handlers</input>
+    <input id="loggy" type="checkbox">Enable Logging</input>
     <div>
       Use the Image above to drag, or long press for contextmenu.
       Or, highlight this text and longpress to drag.
@@ -110,14 +111,17 @@
       "compositionend",
     ];
 
+    let enableLog = true;
     function replaceConsole() {
       var log = console.log.bind(console);
       var group = console.group.bind(console);
       console.log = function (...args) {
         log(...args);
         let el = document.getElementById('log');
-        el.innerHTML += `<pre>${args.join(' ')}<pre>`;
-        el.scrollTop = el.scrollHeight;
+        if (enableLog) {
+          el.innerHTML += `<pre>${args.join(' ')}<pre>`;
+          el.scrollTop = el.scrollHeight;
+        }
       }
       console.group = function (...args) {
         group(...args);
@@ -202,7 +206,7 @@
       }
     }
 
-    const checky = document.querySelector('input[type=checkbox]');
+    const checky = document.getElementById('checky');
     checky.addEventListener('change', (event) => {
       if (event.target.checked) {
         addHandlers();
@@ -211,6 +215,15 @@
       }
     });
     checky.click();
+
+    const loggy = document.getElementById('loggy');
+    loggy.addEventListener('change', (event) => {
+      console.log('Loggy');
+      enableLog = event.target.checked;
+      event.stopPropagation();
+      event.preventDefault();
+    }, { capture: false, passive: false });
+    loggy.click();
 
   </script>
 </body>
