@@ -70,6 +70,11 @@
 
   <script type=module>
     import { measureResponsiveness, estimateInteractionCountsByEventCounts } from './responsiveness.js';
+    import { getLCP, getFID, getINP, getCLS } from './web-vitals.js';
+    getCLS(console.log);
+    getFID(console.log);
+    getINP(console.log, true);
+    getLCP(console.log);
 
     const EVENTS = [
       "keydown",
@@ -81,8 +86,8 @@
       // "touchstart",
       // "touchend",
       // "touchcancel",
-      // "mousedown",
-      // "mouseup",
+      "mousedown",
+      "mouseup",
       // "gotpointercapture",
       // "lostpointercapture",
       "click",
@@ -152,8 +157,17 @@
 
     replaceConsole();
     reportEvents();
+
+    let currentINP;
+    getINP((metric) => {
+      currentINP = metric;
+    }, true);
     setInterval(() => {
-      const counts = estimateInteractionCountsByEventCounts();
+      const counts = {
+        inp: currentINP?.value,
+        count: currentINP?.entries.length,
+        ...estimateInteractionCountsByEventCounts(),
+      };
       document.getElementById('counts').innerHTML = `<div><pre>${JSON.stringify(counts,null,2)}<pre></div>`;
     }, 100);
 
@@ -218,11 +232,10 @@
 
     const loggy = document.getElementById('loggy');
     loggy.addEventListener('change', (event) => {
-      console.log('Loggy');
       enableLog = event.target.checked;
       event.stopPropagation();
       event.preventDefault();
-    }, { capture: false, passive: false });
+    });
     loggy.click();
 
   </script>

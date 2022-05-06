@@ -1,0 +1,1 @@
+/Users/mmocny/dev/web-vitals/dist/web-vitals.js
